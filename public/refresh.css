@@ -1,0 +1,427 @@
+/* ==========================================================================
+   refresh.css — 2026 visual refresh layer for the abrnoc.com static clone.
+   Loads after polish.css and layers a modern type system, refined palette,
+   hero mesh-gradient, pricing card facelift, scroll progress bar, dark mode,
+   and section breathing room without touching the original markup.
+
+   Architecture:
+     - Original Gatsby HTML + styles.css are untouched.
+     - polish.css provides the subtle motion baseline (we do not touch it).
+     - refresh.css overrides selectors / brand vars from styles.css.
+     - All motion-bearing rules are wrapped in
+       (prefers-reduced-motion: no-preference).
+   ========================================================================== */
+
+/* ---------- Inter (variable) — primary font ---------- */
+@import url("https://rsms.me/inter/inter.css");
+
+/* ---------- 1. Refined brand palette (light + dark) ---------- */
+:root {
+  /* New refresh tokens (used by all refresh layers below). */
+  --clr-orange:  #F97316; /* toned warmer-orange, replaces flat #FF9933 */
+  --clr-orange-soft: #FB923C;
+  --clr-navy:    #0B1220;
+  --clr-blue:    #06B6D4; /* cyan accent */
+  --clr-blue-deep: #0EA5E9;
+  --clr-text:    #1F2937;
+  --clr-muted:   #6B7280;
+  --clr-bg:      #FFFFFF;
+  --clr-bg-soft: #F9FAFB;
+  --clr-card:    #FFFFFF;
+  --clr-border:  #E5E7EB;
+
+  /* Override the legacy abrNOC vars from styles.css with refined tones.
+     Keep semantics: the original site read header-blue as primary navy.   */
+  --clr-header-blue:    #0B1220 !important;
+  --clr-button-blue:    #1E3A8A !important;
+  --clr-button-darkblue:#0B1220 !important;
+  --clr-hero-blue:      #93C5FD !important;
+  --clr-hero-opblue:    rgba(147, 197, 253, 0.16) !important;
+  --clr-services-opblue:rgba(147, 197, 253, 0.22) !important;
+  --clr-background:     #FCFDFF !important;
+}
+
+/* Dark theme overrides — applied via [data-theme="dark"] on <html>. */
+[data-theme="dark"] {
+  --clr-bg:      #0B1220;
+  --clr-bg-soft: #111827;
+  --clr-card:    #1F2937;
+  --clr-text:    #E5E7EB;
+  --clr-muted:   #9CA3AF;
+  --clr-border:  #374151;
+  --clr-header-blue:    #F9FAFB !important;
+  --clr-button-darkblue:#F97316 !important;
+}
+
+/* ---------- 2. Typography ---------- */
+html {
+  /* Original site used 62.5% root for rem math; do not change it.       */
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+body {
+  /* Inter as primary; HK Grotesk + Sahel kept as fallback so existing
+     widths/measurements stay close if Inter fails to load.             */
+  font-family: "Inter var", "Inter", "HK Grotesk", "Sahel", system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  font-feature-settings: 'cv11', 'ss01';
+  line-height: 1.58 !important;
+}
+
+/* Persian content (existing site uses class="fa" / lang attrs sometimes). */
+[lang="fa"], .fa, .Persian {
+  font-family: "Sahel", "Inter var", "Inter", sans-serif !important;
+}
+
+/* Tighter heading letter-spacing + slightly heavier weight feel. */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.04em !important;
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+/* Hero h1: ~25% larger and bolder. */
+.hero-info--header {
+  font-size: 8.75rem !important;   /* was 7rem */
+  line-height: 1.05 !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.045em !important;
+  background: linear-gradient(95deg, var(--clr-header-blue) 0%, #1E3A8A 60%, var(--clr-orange) 110%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+@media (max-width: 1100px) {
+  .hero-info--header { font-size: 7.5rem !important; }
+}
+@media (max-width: 720px) {
+  .hero-info--header { font-size: 5rem !important; line-height: 1.1 !important; }
+}
+
+/* Body type: ensure baseline reads modern. */
+body, p, li, span, .hero-info--content {
+  line-height: 1.58;
+}
+
+/* ---------- 3. Hero mesh-gradient backdrop ---------- */
+#section-hero { position: relative; overflow: hidden; isolation: isolate; }
+#section-hero .hero { position: relative; z-index: 1; }
+
+/* NOTE: Do NOT use #section-hero::after here — the original abrnoc.com CSS
+   uses #section-hero:after to render the desktop rocket illustration (via
+   background-image: hero-7aebfe7...png). Overriding ::after kills the
+   rocket. We confine the mesh-gradient backdrop to ::before only. */
+#section-hero::before {
+  content: "";
+  position: absolute;
+  inset: -15%;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(150px);
+  opacity: 0.18;
+  background:
+    radial-gradient(28% 32% at 4% 6%,   rgba(249, 115, 22, 0.55) 0%, transparent 60%),
+    radial-gradient(26% 30% at 96% 12%, rgba(6, 182, 212, 0.50) 0%, transparent 60%),
+    radial-gradient(30% 34% at 6% 96%,  rgba(251, 146, 60, 0.45) 0%, transparent 60%),
+    radial-gradient(28% 32% at 98% 92%, rgba(30, 58, 138, 0.40) 0%, transparent 60%),
+    radial-gradient(34% 38% at 0% 50%,  rgba(6, 182, 212, 0.40) 0%, transparent 60%),
+    radial-gradient(34% 38% at 100% 50%, rgba(249, 115, 22, 0.30) 0%, transparent 60%);
+}
+
+[data-theme="dark"] #section-hero::before { opacity: 0.30; }
+
+/* Smaller, more-grounded rocket. */
+#section-hero .hero-img {
+  filter: drop-shadow(0 22px 38px rgba(11, 18, 32, 0.18))
+          drop-shadow(0 8px 18px rgba(249, 115, 22, 0.12));
+  max-width: 88% !important;
+}
+
+/* Animate the single mesh layer (::after intentionally untouched — see note above). */
+@media (prefers-reduced-motion: no-preference) {
+  #section-hero::before {
+    animation: refresh-mesh-a 22s ease-in-out infinite alternate;
+  }
+  @keyframes refresh-mesh-a {
+    0%   { transform: translate3d(0, 0, 0) scale(1); }
+    50%  { transform: translate3d(2%, -3%, 0) scale(1.05); }
+    100% { transform: translate3d(-2%, 2%, 0) scale(0.98); }
+  }
+}
+
+/* ---------- 4. Pricing cards ---------- */
+[class*="priceCard-module--price-card--"] {
+  position: relative;
+  border: 1px solid var(--clr-border) !important;
+  border-radius: 16px !important;
+  padding: 36px 28px !important;
+  background: var(--clr-card) !important;
+  box-shadow: 0 1px 2px rgba(11, 18, 32, 0.04), 0 8px 22px rgba(11, 18, 32, 0.05) !important;
+  overflow: hidden;
+}
+[class*="priceCard-module--price-card--"]::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--clr-orange), var(--clr-blue));
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  opacity: 0.85;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [class*="priceCard-module--price-card--"] {
+    transition:
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+  [class*="priceCard-module--price-card--"]:hover {
+    transform: translateY(-6px) scale(1.02) !important;
+    box-shadow: 0 24px 48px rgba(11, 18, 32, 0.12) !important;
+  }
+}
+
+/* Featured/active card — pop visually. */
+[class*="priceCard-module--active--"] {
+  background: linear-gradient(155deg, #1E3A8A 0%, #0B1220 80%) !important;
+  border-color: transparent !important;
+  box-shadow: 0 24px 48px rgba(30, 58, 138, 0.30), 0 0 0 1px rgba(249, 115, 22, 0.35) inset !important;
+  transform: translateY(-6px);
+}
+[class*="priceCard-module--active--"]::before {
+  height: 5px;
+  background: linear-gradient(90deg, var(--clr-orange), var(--clr-orange-soft));
+  opacity: 1;
+}
+[class*="priceCard-module--active--"] *:not(svg):not(path) {
+  color: #F9FAFB !important;
+}
+
+[data-theme="dark"] [class*="priceCard-module--price-card--"] {
+  background: var(--clr-card) !important;
+  border-color: var(--clr-border) !important;
+}
+
+/* ---------- 5. Map pulsing dots ---------- */
+#section-map .map { position: relative; }
+#section-map .map-img { position: relative; z-index: 1; }
+
+#section-map .map::before,
+#section-map .map::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* dot 1 */
+#section-map .map::before {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--clr-orange);
+  box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7);
+  top: 38%; left: 22%;
+}
+/* dot 2 */
+#section-map .map::after {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--clr-blue);
+  box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+  top: 30%; left: 56%;
+}
+
+/* The remaining 5 dots are emitted by JS as .refresh-mapdot spans. */
+.refresh-mapdot {
+  position: absolute;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+}
+.refresh-mapdot--orange { background: var(--clr-orange); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7); }
+.refresh-mapdot--cyan   { background: var(--clr-blue);   box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); }
+.refresh-mapdot--navy   { background: #1E3A8A;           box-shadow: 0 0 0 0 rgba(30, 58, 138, 0.7); }
+
+@media (prefers-reduced-motion: no-preference) {
+  #section-map .map::before { animation: refresh-pulse-orange 2.4s ease-out infinite; }
+  #section-map .map::after  { animation: refresh-pulse-cyan   2.8s ease-out infinite 0.6s; }
+  .refresh-mapdot--orange   { animation: refresh-pulse-orange 2.6s ease-out infinite 0.3s; }
+  .refresh-mapdot--cyan     { animation: refresh-pulse-cyan   3.0s ease-out infinite 0.9s; }
+  .refresh-mapdot--navy     { animation: refresh-pulse-navy   3.2s ease-out infinite 1.4s; }
+
+  @keyframes refresh-pulse-orange {
+    0%   { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7); transform: scale(1); }
+    70%  { box-shadow: 0 0 0 18px rgba(249, 115, 22, 0); transform: scale(1.05); }
+    100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); transform: scale(1); }
+  }
+  @keyframes refresh-pulse-cyan {
+    0%   { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); transform: scale(1); }
+    70%  { box-shadow: 0 0 0 18px rgba(6, 182, 212, 0); transform: scale(1.05); }
+    100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); transform: scale(1); }
+  }
+  @keyframes refresh-pulse-navy {
+    0%   { box-shadow: 0 0 0 0 rgba(30, 58, 138, 0.7); transform: scale(1); }
+    70%  { box-shadow: 0 0 0 16px rgba(30, 58, 138, 0); transform: scale(1.05); }
+    100% { box-shadow: 0 0 0 0 rgba(30, 58, 138, 0); transform: scale(1); }
+  }
+}
+
+/* ---------- 6. Dark mode toggle button ---------- */
+.refresh-theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--clr-border);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--clr-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 6px 20px rgba(11, 18, 32, 0.12);
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+.refresh-theme-toggle:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 10px 26px rgba(11, 18, 32, 0.18);
+}
+.refresh-theme-toggle svg { width: 20px; height: 20px; }
+.refresh-theme-toggle .refresh-icon-moon  { display: none; }
+[data-theme="dark"] .refresh-theme-toggle {
+  background: rgba(31, 41, 55, 0.92);
+  border-color: rgba(249, 250, 251, 0.18);
+  color: #F9FAFB;
+}
+[data-theme="dark"] .refresh-theme-toggle .refresh-icon-sun  { display: none; }
+[data-theme="dark"] .refresh-theme-toggle .refresh-icon-moon { display: inline-block; }
+
+/* ---------- 7. Dark mode global overrides ---------- */
+[data-theme="dark"] body { background-color: var(--clr-bg) !important; color: var(--clr-text) !important; }
+[data-theme="dark"] .navbar.colorChange { background-color: rgba(11, 18, 32, 0.92) !important; }
+[data-theme="dark"] .navbar a, [data-theme="dark"] .navbar span { color: #F9FAFB !important; }
+
+/* Sections that have white backgrounds in light mode. */
+[data-theme="dark"] #section-services,
+[data-theme="dark"] #section-who,
+[data-theme="dark"] #section-team,
+[data-theme="dark"] #section-Customers,
+[data-theme="dark"] #section-map,
+[data-theme="dark"] #section-join,
+[data-theme="dark"] #section-footer { background-color: var(--clr-bg) !important; color: var(--clr-text) !important; }
+
+[data-theme="dark"] #section-services *,
+[data-theme="dark"] #section-who *,
+[data-theme="dark"] #section-team *,
+[data-theme="dark"] #section-Customers *,
+[data-theme="dark"] #section-map *,
+[data-theme="dark"] #section-join *,
+[data-theme="dark"] #section-footer * {
+  color: inherit;
+}
+
+/* Tone down very-light-grey backgrounds in dark mode. */
+[data-theme="dark"] .services__item,
+[data-theme="dark"] .who_items,
+[data-theme="dark"] .testimonial-item,
+[data-theme="dark"] .join__body-item,
+[data-theme="dark"] .team-member {
+  background-color: var(--clr-card) !important;
+  color: var(--clr-text) !important;
+  border: 1px solid var(--clr-border);
+}
+
+/* Hero gradient text — keep gradient in dark mode but lighter base. */
+[data-theme="dark"] .hero-info--header {
+  background: linear-gradient(95deg, #F9FAFB 0%, #93C5FD 60%, var(--clr-orange) 110%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ---------- 8. Scroll progress bar ---------- */
+.refresh-scrollbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  z-index: 9998;
+  background: linear-gradient(90deg, var(--clr-orange), var(--clr-blue));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .refresh-scrollbar { transition: transform 0.05s linear; }
+}
+
+/* ---------- 9. Buttons ---------- */
+.btn,
+a.btn,
+button.btn {
+  border-radius: 999px !important;
+  letter-spacing: 0.005em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn,
+  a.btn,
+  button.btn {
+    transition:
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.25s ease,
+      filter   0.25s ease,
+      background 0.25s ease !important;
+  }
+  .btn:hover,
+  a.btn:hover,
+  button.btn:hover {
+    transform: translateY(-2px) scale(1.04) !important;
+    filter: brightness(1.05) !important;
+    box-shadow: 0 14px 30px rgba(11, 18, 32, 0.16) !important;
+  }
+}
+
+/* Primary (orange/red) CTAs — outer glow on hover. */
+.request_cta__btn,
+.refer_cta__btn,
+.btn.join__body-btn {
+  background-image: linear-gradient(135deg, var(--clr-orange), var(--clr-orange-soft)) !important;
+  background-color: var(--clr-orange) !important;
+  color: #FFFFFF !important;
+  border: 0 !important;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .request_cta__btn:hover,
+  .refer_cta__btn:hover,
+  .btn.join__body-btn:hover {
+    box-shadow:
+      0 14px 30px rgba(249, 115, 22, 0.35),
+      0 0 0 6px rgba(249, 115, 22, 0.10) !important;
+    color: #FFFFFF !important;
+  }
+}
+
+/* ---------- 10. Section spacing ---------- */
+section[id^="section-"]:not(#section-hero):not(#section-footer) {
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+@media (max-width: 720px) {
+  section[id^="section-"]:not(#section-hero):not(#section-footer) {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+}
+

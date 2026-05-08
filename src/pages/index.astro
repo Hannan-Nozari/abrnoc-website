@@ -1,17 +1,60 @@
 ---
+// Pixel-perfect static port of the abrnoc.com Gatsby homepage.
+// We read the original Gatsby SSR output verbatim at build time and emit it
+// as-is, so Astro produces byte-identical-as-possible HTML output.
+//
+// Any future redesign should replace this with native Astro components, but
+// the goal of this project is "exact same".
+//
+// We *do* string-inject several enhancement layers into the embedded HTML:
+//   - polish.css/polish.js   — subtle motion baseline
+//   - refresh.css/refresh.js — 2026 visual refresh (palette, mesh, theme,…)
+//   - amazing.css/amazing.js — product-site upgrade (stats, globe, mocks, parallax)
+// The original markup is untouched.  Each layer respects prefers-reduced-motion.
+//
+// We ALSO strip the dead Gatsby/React JS bundle <script src="..."> tags from
+// the body before injecting our scripts.  The mirror does not hydrate React,
+// so app-*.js, framework-*.js, webpack-runtime-*.js, and component---*.js
+// chunks just bloat the HTML & download budget for nothing.  We do NOT delete
+// the .js files from public/ — the user opted to keep that decision to the
+// VPS rsync layer.
+import rawHtml from '../../source-snapshot/index.html?raw';
+export const prerender = true;
 
+// Staging on astro.abrnoc.com — block search indexing.
+const noindexMeta = '<meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><meta name="googlebot" content="noindex,nofollow">';
+
+// 1. Strip dead Gatsby JS.
+//    Targets:
+//      <script src="/app-*.js" ...></script>
+//      <script src="/framework-*.js" ...></script>
+//      <script src="/webpack-runtime-*.js" ...></script>
+//      <script src="/component---src-pages-*.js" ...></script>
+//    Plus the inline gatsby-chunk-mapping + webpack-compilation-hash blocks
+//    (orphaned without the runtime, also references the same dead chunks).
+const deadScriptSrcRe = /<script[^>]+src=["']\/(?:app-|framework-|webpack-runtime-|component---src-pages-)[^"']+["'][^>]*>\s*<\/script>/g;
+const chunkMappingRe = /<script[^>]*id=["']gatsby-chunk-mapping["'][^>]*>[\s\S]*?<\/script>/g;
+const compilationHashRe = /<script[^>]*>\s*window\.___webpackCompilationHash[\s\S]*?<\/script>/g;
+const pagePathRe = /<script[^>]*id=["']gatsby-script-loader["'][\s\S]*?<\/script>/g;
+
+const stripped = rawHtml
+  .replace(deadScriptSrcRe, '')
+  .replace(chunkMappingRe, '')
+  .replace(compilationHashRe, '')
+  .replace(pagePathRe, '');
+
+// 2. Inject enhancement layers in the order:
+//    head:    polish.css → refresh.css → amazing.css
+//    /body:   hydrate.js → polish.js → refresh.js → amazing.js
+//    (amazing runs LAST so it can read the hydrated DOM and override styles.)
+const enhanced = stripped
+  .replace(
+    '</head>',
+    `${noindexMeta}<link rel="stylesheet" href="/polish.css"><link rel="stylesheet" href="/refresh.css"><link rel="stylesheet" href="/amazing.css"></head>`
+  )
+  .replace(
+    '</body>',
+    '<script src="/hydrate.js" defer></script><script src="/polish.js" defer></script><script src="/refresh.js" defer></script><script src="/amazing.js" defer></script></body>'
+  );
 ---
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Fragment set:html={enhanced} />

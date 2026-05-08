@@ -1,0 +1,788 @@
+/* ==========================================================================
+   amazing.css — 2026 product-site upgrade layer for the abrnoc.com static
+   clone.  Loads AFTER hydrate.js, polish.css, and refresh.css, so it can
+   override anything they set and consume CSS variables they define
+   (--clr-orange, --clr-blue, --clr-navy, etc. from refresh.css).
+
+   What this layer adds:
+     1. (none — JS only) — strips dead Gatsby script tags (handled at build).
+     2. Live stats ticker band beneath the hero (.amazing-stats).
+     3. (Globe removed at user's request — original .map-img stays.)
+     4. Mock product UI panels inside .services__item cards
+        (.amazing-mock--compute|--storage|--billing).
+     5. Scroll-driven hero parallax — consumes --p set by JS on #section-hero.
+     6. Gorgeous "Life at abrNOC" gallery — rounded tiles, soft elevation,
+        gradient heading, click-to-open lightbox with prev/next + ESC.
+
+   All motion is gated behind (prefers-reduced-motion: no-preference) where
+   possible.  Static visuals (stats values, mock panels, gallery photos)
+   render even when reduced-motion is on; only the animation/parallax stops.
+   ========================================================================== */
+
+/* ============================================================
+   2. STATS TICKER
+   ============================================================ */
+.amazing-stats {
+  position: relative;
+  z-index: 5;
+  margin: -2.4rem auto 0 auto;
+  max-width: 136.2rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  padding: 1.4rem 2.4rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+          backdrop-filter: saturate(140%) blur(14px);
+  border: 1px solid rgba(11, 18, 32, 0.06);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 22px 50px -18px rgba(11, 18, 32, 0.18),
+    0 6px 18px rgba(11, 18, 32, 0.06);
+  font-family: "Inter var", "Inter", system-ui, sans-serif;
+  font-feature-settings: 'tnum' 1, 'cv11', 'ss01';
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 860px) {
+  .amazing-stats {
+    margin: -1.4rem 2rem 0 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    border-radius: 18px;
+    padding: 1.2rem 1.6rem;
+    gap: 0.6rem 0.4rem;
+  }
+}
+
+.amazing-stats__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.4rem 1rem;
+  border-right: 1px solid rgba(11, 18, 32, 0.07);
+  min-width: 0;
+}
+.amazing-stats__cell:last-child { border-right: 0; }
+@media (max-width: 860px) {
+  .amazing-stats__cell { border-right: 0; padding: 0.2rem 0.4rem; }
+  .amazing-stats__cell:nth-child(odd) { border-right: 1px solid rgba(11, 18, 32, 0.07); }
+}
+
+.amazing-stats__label {
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  color: var(--clr-muted, #6B7280);
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+.amazing-stats__value {
+  font-size: 2.0rem;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--clr-text, #111827);
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  transition: opacity 0.45s ease;
+}
+.amazing-stats__value.is-fading { opacity: 0.32; }
+.amazing-stats__value-suffix {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--clr-muted, #6B7280);
+  letter-spacing: 0;
+}
+
+/* dark mode */
+[data-theme="dark"] .amazing-stats {
+  background: rgba(31, 41, 55, 0.72);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 22px 50px -18px rgba(0, 0, 0, 0.55);
+}
+[data-theme="dark"] .amazing-stats__cell { border-right-color: rgba(255, 255, 255, 0.08); }
+[data-theme="dark"] .amazing-stats__value { color: #F9FAFB; }
+[data-theme="dark"] .amazing-stats__label { color: #9CA3AF; }
+[data-theme="dark"] .amazing-stats__value-suffix { color: #9CA3AF; }
+
+/* a tiny pulsing green dot before the "Servers online" label */
+.amazing-stats__cell--live .amazing-stats__label::before {
+  content: "";
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #22C55E;
+  margin-right: 6px;
+  vertical-align: 1px;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .amazing-stats__cell--live .amazing-stats__label::before {
+    animation: amazing-live-pulse 2.2s ease-out infinite;
+  }
+  @keyframes amazing-live-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+    70%  { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+  }
+}
+
+/* ============================================================
+   4. MOCK PRODUCT UI PANELS in services cards
+   ============================================================ */
+/* widen the services items so the mock has room to breathe */
+.amazing-services-enhanced .services__items {
+  flex-wrap: wrap;
+  gap: 2.4rem;
+  margin-left: 0;
+  margin-right: 0;
+}
+.amazing-services-enhanced .services__item {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 3.2rem !important;
+  flex-direction: column;
+  align-items: stretch !important;
+  border: 1px solid var(--clr-border, #E5E7EB);
+  border-radius: 18px !important;
+  background-color: var(--clr-card, #FFFFFF) !important;
+  box-shadow: 0 1px 2px rgba(11, 18, 32, 0.04), 0 12px 28px rgba(11, 18, 32, 0.06) !important;
+}
+@media (min-width: 861px) {
+  .amazing-services-enhanced .services__item {
+    width: calc(33.333% - 1.6rem) !important;
+  }
+}
+@media (max-width: 480px) {
+  .amazing-services-enhanced .services__item {
+    padding: 2rem !important;
+    margin-bottom: 1.4rem !important;
+  }
+}
+
+.amazing-services-enhanced .services__item-img {
+  width: 6.4rem !important;
+  height: 6.4rem !important;
+  margin-inline-end: 0 !important;
+  margin-bottom: 1.2rem !important;
+}
+.amazing-services-enhanced .services__item-name {
+  padding-right: 0 !important;
+  margin-bottom: 1.4rem;
+  font-size: 2.2rem;
+  letter-spacing: -0.02em;
+}
+
+.amazing-mock {
+  margin-top: 1.6rem;
+  border: 1px solid var(--clr-border, #E5E7EB);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #FAFBFC 0%, #FFFFFF 100%);
+  padding: 1.4rem;
+  font-family: "Inter var", "Inter", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 1.2rem;
+  color: var(--clr-text, #1F2937);
+  box-shadow: 0 1px 2px rgba(11, 18, 32, 0.04);
+  overflow: hidden;
+}
+[data-theme="dark"] .amazing-mock {
+  background: linear-gradient(180deg, #111827 0%, #0F1825 100%);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* shared: window-chrome bar at the top of each mock */
+.amazing-mock__chrome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 0 1rem 0;
+  border-bottom: 1px solid rgba(11, 18, 32, 0.06);
+  margin-bottom: 1rem;
+}
+[data-theme="dark"] .amazing-mock__chrome { border-bottom-color: rgba(255,255,255,0.06); }
+.amazing-mock__dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: #E5E7EB;
+}
+.amazing-mock__dot--r { background: #FCA5A5; }
+.amazing-mock__dot--y { background: #FDE68A; }
+.amazing-mock__dot--g { background: #86EFAC; }
+.amazing-mock__title {
+  margin-left: auto;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  color: var(--clr-muted, #6B7280);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ─── 4a. Compute mock — fake VPS dashboard ─────────────────── */
+.amazing-mock--compute .amazing-mock__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.amazing-mock-vm {
+  display: grid;
+  grid-template-columns: 12px 1fr auto;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  background: rgba(6, 182, 212, 0.04);
+  border: 1px solid rgba(6, 182, 212, 0.12);
+}
+[data-theme="dark"] .amazing-mock-vm {
+  background: rgba(6, 182, 212, 0.08);
+  border-color: rgba(6, 182, 212, 0.18);
+}
+.amazing-mock-vm__status {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #22C55E;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+}
+.amazing-mock-vm__name {
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: 0;
+  color: var(--clr-text, #1F2937);
+}
+.amazing-mock-vm__meta {
+  font-size: 1.0rem;
+  color: var(--clr-muted, #6B7280);
+  letter-spacing: 0.01em;
+}
+[data-theme="dark"] .amazing-mock-vm__name { color: #F9FAFB; }
+[data-theme="dark"] .amazing-mock-vm__meta { color: #9CA3AF; }
+.amazing-mock-vm__ping {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #16A34A;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── 4b. Storage mock — usage bars ─────────────────────────── */
+.amazing-mock--storage .amazing-mock__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1.0rem;
+}
+.amazing-mock-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.amazing-mock-bar__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 1.1rem;
+}
+.amazing-mock-bar__label {
+  font-weight: 600;
+  color: var(--clr-text, #1F2937);
+}
+[data-theme="dark"] .amazing-mock-bar__label { color: #F9FAFB; }
+.amazing-mock-bar__value {
+  color: var(--clr-muted, #6B7280);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.05rem;
+}
+.amazing-mock-bar__track {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(11, 18, 32, 0.06);
+  overflow: hidden;
+}
+[data-theme="dark"] .amazing-mock-bar__track { background: rgba(255, 255, 255, 0.08); }
+.amazing-mock-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--clr-blue, #06B6D4), var(--clr-orange, #F97316));
+  width: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .amazing-mock-bar__fill {
+    transition: width 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+.amazing-mock--storage .amazing-mock__total {
+  margin-top: 0.6rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed rgba(11, 18, 32, 0.08);
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+}
+[data-theme="dark"] .amazing-mock--storage .amazing-mock__total { border-top-color: rgba(255,255,255,0.08); }
+.amazing-mock--storage .amazing-mock__total b {
+  color: var(--clr-text, #1F2937);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+[data-theme="dark"] .amazing-mock--storage .amazing-mock__total b { color: #F9FAFB; }
+
+/* ─── 4c. Billing mock — sparkline + invoice rows ───────────── */
+.amazing-mock--billing .amazing-mock__chart {
+  margin: 0.4rem 0 1.0rem 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.3rem;
+  height: 56px;
+}
+.amazing-mock-bar-col {
+  flex: 1 1 0;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, var(--clr-orange-soft, #FB923C), var(--clr-orange, #F97316));
+  opacity: 0.85;
+  min-height: 4px;
+}
+.amazing-mock-bar-col.is-current {
+  background: linear-gradient(180deg, var(--clr-blue-deep, #0EA5E9), var(--clr-blue, #06B6D4));
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .amazing-mock-bar-col {
+    transition: height 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+.amazing-mock--billing .amazing-mock__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.amazing-mock-invoice {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(11, 18, 32, 0.04);
+  font-size: 1.1rem;
+}
+.amazing-mock-invoice:last-child { border-bottom: 0; }
+[data-theme="dark"] .amazing-mock-invoice { border-bottom-color: rgba(255,255,255,0.05); }
+.amazing-mock-invoice__name {
+  color: var(--clr-text, #1F2937);
+  font-weight: 600;
+}
+[data-theme="dark"] .amazing-mock-invoice__name { color: #F9FAFB; }
+.amazing-mock-invoice__amount {
+  color: var(--clr-text, #1F2937);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+[data-theme="dark"] .amazing-mock-invoice__amount { color: #F9FAFB; }
+.amazing-mock-invoice__pill {
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.10);
+  color: #16A34A;
+}
+.amazing-mock-invoice__pill--scheduled {
+  background: rgba(6, 182, 212, 0.12);
+  color: #0E7490;
+}
+[data-theme="dark"] .amazing-mock-invoice__pill {
+  background: rgba(34, 197, 94, 0.18);
+  color: #4ADE80;
+}
+[data-theme="dark"] .amazing-mock-invoice__pill--scheduled {
+  background: rgba(6, 182, 212, 0.22);
+  color: #67E8F9;
+}
+
+/* ============================================================
+   5. HERO PARALLAX — consumes --p (0..1) set on #section-hero
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  #section-hero {
+    /* JS sets --p; default 0 if not set (e.g. before first scroll). */
+    --p: 0;
+  }
+
+  /* h1 + subtitle text translate up + fade slightly. */
+  #section-hero .hero-info {
+    will-change: transform, opacity;
+    transform: translate3d(0, calc(var(--p) * -42px), 0);
+    opacity: calc(1 - var(--p) * 0.55);
+  }
+
+  /* hero rocket image (the desktop foreground rocket shows as
+     #section-hero::after via legacy CSS — its *background-image*).
+     We can't transform a pseudo-element from JS, but we can transform
+     the inline <img class="hero-img"> + the section's ::after via a CSS
+     var. */
+  #section-hero .hero-img {
+    will-change: transform;
+    transform:
+      translate3d(calc(var(--p) * 28px), calc(var(--p) * 12px), 0)
+      scale(calc(1 - var(--p) * 0.05));
+  }
+
+  /* The ::before mesh-gradient drifts opposite for parallax depth.
+     We have to compose with refresh.css's mesh-gradient transform —
+     to avoid fighting it, only override the transform when --p != 0 */
+  #section-hero::before {
+    transform: translate3d(calc(var(--p) * -18px), calc(var(--p) * 10px), 0)
+               scale(calc(1 + var(--p) * 0.04));
+    /* Override the keyframe animation in refresh.css when scrolling. */
+  }
+  /* When the page is at the very top (--p == 0) we leave refresh.css's
+     idle drift animation alone.  Once any scroll happens, JS adds
+     .amazing-parallaxing on #section-hero; that flag suppresses the keyframes
+     so the JS-driven transform takes over cleanly. */
+  #section-hero.amazing-parallaxing::before {
+    animation: none;
+  }
+}
+
+/* legacy desktop ::after rocket — only present on wide viewports per the
+   original styles.  Move it via the same --p variable. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 1100px) {
+  #section-hero::after {
+    will-change: transform;
+    transform:
+      translate3d(calc(var(--p) * 36px), calc(var(--p) * 18px), 0)
+      scale(calc(1 - var(--p) * 0.05)) !important;
+  }
+}
+
+/* ============================================================
+   8. ROCKET FLOAT — gently bob + tilt so it feels alive.
+      Uses the independent `translate` and `rotate` CSS properties,
+      which compose with the existing `transform` parallax (so the
+      bob doesn't fight scroll-driven movement).
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  #section-hero::after,
+  #section-hero .hero-img {
+    animation:
+      rocket-bob 5.4s ease-in-out infinite,
+      rocket-tilt 7.2s ease-in-out infinite;
+    transform-origin: 50% 60%;
+  }
+
+  /* "Who We Are" character (running with server rack) — same bob+tilt feel,
+     but desynced from the rocket so the two illustrations breathe
+     independently. */
+  .who_we-img {
+    animation:
+      rocket-bob 6.4s ease-in-out infinite,
+      rocket-tilt 8.6s ease-in-out infinite;
+    animation-delay: -1.2s, -2.0s;
+    transform-origin: 50% 60%;
+    will-change: translate, rotate;
+  }
+
+  @keyframes rocket-bob {
+    0%   { translate: 0 0; }
+    50%  { translate: 0 -14px; }
+    100% { translate: 0 0; }
+  }
+  @keyframes rocket-tilt {
+    0%   { rotate: -0.8deg; }
+    50%  { rotate:  1.6deg; }
+    100% { rotate: -0.8deg; }
+  }
+}
+
+/* ============================================================
+   6. LIFE AT abrNOC — gorgeous gallery + lightbox
+   ============================================================ */
+
+/* Heading: gradient text, bigger, more dramatic. */
+.gallery__header {
+  font-size: 6.4rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.04em !important;
+  margin-bottom: 7rem !important;
+  background: linear-gradient(135deg, var(--clr-navy, #0B1220) 0%, var(--clr-blue, #06B6D4) 55%, var(--clr-orange, #F97316) 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  line-height: 1.05;
+  padding: 0 1.6rem;
+}
+@media (max-width: 720px) {
+  .gallery__header { font-size: 4.4rem !important; margin-bottom: 4rem !important; }
+}
+[data-theme="dark"] .gallery__header {
+  background: linear-gradient(135deg, #F9FAFB 0%, #06B6D4 55%, #F97316 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+}
+
+/* Container: more breathing room. */
+.gallery {
+  gap: 18px !important;
+  padding: 0 1.6rem;
+}
+@media (max-width: 720px) {
+  .gallery { gap: 12px !important; }
+}
+
+/* Tiles: soft elevation, big rounded corners, smooth transitions. */
+.gallery [class^="gallery__item--"],
+.gallery [class*=" gallery__item--"] {
+  border-radius: 18px !important;
+  overflow: hidden;
+  box-shadow:
+    0 1px 2px rgba(11, 18, 32, 0.04),
+    0 8px 24px rgba(11, 18, 32, 0.06);
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  isolation: isolate;
+}
+.gallery [class^="gallery__item--"]:hover,
+.gallery [class*=" gallery__item--"]:hover {
+  transform: translateY(-4px) scale(1.012);
+  box-shadow:
+    0 4px 8px rgba(11, 18, 32, 0.08),
+    0 22px 44px rgba(11, 18, 32, 0.18);
+  z-index: 2;
+}
+[data-theme="dark"] .gallery [class^="gallery__item--"],
+[data-theme="dark"] .gallery [class*=" gallery__item--"] {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 8px 24px rgba(0, 0, 0, 0.45);
+}
+[data-theme="dark"] .gallery [class^="gallery__item--"]:hover,
+[data-theme="dark"] .gallery [class*=" gallery__item--"]:hover {
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.45),
+    0 22px 44px rgba(0, 0, 0, 0.6);
+}
+
+/* Photos: cohesive tone, no dimming on hover (override original :hover). */
+.gallery__img {
+  border-radius: 18px !important;
+  filter: saturate(1.06) contrast(1.02) !important;
+  transition:
+    filter 0.4s ease,
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+.gallery__img:hover {
+  filter: saturate(1.14) contrast(1.04) brightness(1.04) !important;
+  cursor: zoom-in !important;
+}
+
+/* Subtle gradient sheen on hover for premium feel. */
+.gallery [class^="gallery__item--"]::after,
+.gallery [class*=" gallery__item--"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.0) 40%, rgba(255, 255, 255, 0.08) 60%, rgba(255, 255, 255, 0.0) 80%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  border-radius: 18px;
+  z-index: 1;
+}
+.gallery [class^="gallery__item--"]:hover::after,
+.gallery [class*=" gallery__item--"]:hover::after { opacity: 1; }
+
+/* ───────────────────── Lightbox ───────────────────── */
+.amazing-lightbox {
+  position: fixed; inset: 0;
+  z-index: 100000;
+  background: rgba(11, 18, 32, 0.92);
+  -webkit-backdrop-filter: blur(14px);
+          backdrop-filter: blur(14px);
+  display: none;
+  align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.amazing-lightbox.is-open {
+  display: flex;
+  opacity: 1;
+}
+.amazing-lightbox__img {
+  max-width: 92vw;
+  max-height: 84vh;
+  border-radius: 14px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.amazing-lightbox__btn {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.10);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(12px);
+          backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inter var", "Inter", system-ui, sans-serif;
+  transition: background 0.15s ease, transform 0.15s ease;
+  padding: 0;
+  line-height: 1;
+}
+.amazing-lightbox__btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: scale(1.06);
+}
+.amazing-lightbox__nav {
+  top: 50%;
+  width: 56px; height: 56px;
+  font-size: 26px;
+  transform: translateY(-50%);
+}
+.amazing-lightbox__nav:hover { transform: translateY(-50%) scale(1.06); }
+.amazing-lightbox__nav--prev { left: 28px; }
+.amazing-lightbox__nav--next { right: 28px; }
+.amazing-lightbox__close {
+  top: 24px; right: 24px;
+  width: 46px; height: 46px;
+  font-size: 24px;
+}
+.amazing-lightbox__counter {
+  position: absolute;
+  bottom: 28px; left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.2rem;
+  font-weight: 600;
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  letter-spacing: 0.08em;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
+}
+@media (max-width: 720px) {
+  .amazing-lightbox__nav { width: 44px; height: 44px; font-size: 20px; }
+  .amazing-lightbox__nav--prev { left: 12px; }
+  .amazing-lightbox__nav--next { right: 12px; }
+  .amazing-lightbox__close { top: 14px; right: 14px; width: 40px; height: 40px; font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .amazing-lightbox { transition: none; }
+  .amazing-lightbox__btn { transition: none; }
+}
+
+/* ============================================================
+   7. HERO CLI MOCK — terminal snippet inside the hero-info column,
+      directly beneath the subtitle, so it reads as a proof point.
+   ============================================================ */
+.amazing-cli {
+  display: block;
+  width: 100%;
+  max-width: 480px;
+  margin-top: 3.2rem;
+  border-radius: 14px;
+  background: rgba(11, 18, 32, 0.96);
+  -webkit-backdrop-filter: blur(20px);
+          backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 6px 18px rgba(11, 18, 32, 0.16),
+    0 28px 60px rgba(11, 18, 32, 0.18);
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", Consolas, monospace;
+  color: #E5E7EB;
+  font-size: 1.3rem;
+  line-height: 1.7;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none; /* purely decorative */
+  position: relative;
+  z-index: 5;
+}
+.amazing-cli.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+.amazing-cli__chrome {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.025);
+}
+.amazing-cli__dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+.amazing-cli__dot--r { background: #FF5F57; }
+.amazing-cli__dot--y { background: #FEBC2E; }
+.amazing-cli__dot--g { background: #28C840; }
+.amazing-cli__title {
+  margin-left: 10px;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+}
+.amazing-cli__body {
+  padding: 16px 18px 22px;
+  min-height: 200px;
+  font-feature-settings: "calt" 0;
+  white-space: normal;
+  word-break: break-word;
+}
+.amazing-cli__line { display: block; }
+.amazing-cli__prompt { color: #06B6D4; margin-right: 10px; user-select: none; }
+.amazing-cli__cmd    { color: #F9FAFB; }
+.amazing-cli__cmd .flag { color: #F97316; }
+.amazing-cli__cmd .arg  { color: #A5F3FC; }
+.amazing-cli__caret {
+  display: inline-block;
+  width: 8px;
+  height: 1.3em;
+  background: #06B6D4;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  animation: amazing-cli-blink 1s steps(2, end) infinite;
+}
+@keyframes amazing-cli-blink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.amazing-cli__output { margin-top: 14px; color: rgba(255, 255, 255, 0.62); }
+.amazing-cli__output > div {
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  column-gap: 10px;
+  align-items: baseline;
+  padding: 1px 0;
+}
+.amazing-cli__output .ok  { color: #34D399; font-weight: 700; }
+.amazing-cli__output .key { color: rgba(255, 255, 255, 0.85); }
+.amazing-cli__output .val { color: #FBBF24; }
+
+/* Hide on cramped viewports — hero already has tight space there. */
+@media (max-width: 1100px) {
+  .amazing-cli { display: none; }
+}
