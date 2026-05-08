@@ -1,0 +1,33 @@
+---
+// Pixel-perfect static port of the abrnoc.com Gatsby /terms-of-service/ page.
+// Same approach as src/pages/index.astro — see that file for full notes.
+import rawHtml from '../../../source-snapshot/terms-of-service.html?raw';
+export const prerender = true;
+
+// Staging on astro.abrnoc.com — block search indexing.
+const noindexMeta = '<meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><meta name="googlebot" content="noindex,nofollow">';
+
+// 1. Strip dead Gatsby JS.
+const deadScriptSrcRe = /<script[^>]+src=["']\/(?:app-|framework-|webpack-runtime-|component---src-pages-)[^"']+["'][^>]*>\s*<\/script>/g;
+const chunkMappingRe = /<script[^>]*id=["']gatsby-chunk-mapping["'][^>]*>[\s\S]*?<\/script>/g;
+const compilationHashRe = /<script[^>]*>\s*window\.___webpackCompilationHash[\s\S]*?<\/script>/g;
+const pagePathRe = /<script[^>]*id=["']gatsby-script-loader["'][\s\S]*?<\/script>/g;
+
+const stripped = rawHtml
+  .replace(deadScriptSrcRe, '')
+  .replace(chunkMappingRe, '')
+  .replace(compilationHashRe, '')
+  .replace(pagePathRe, '');
+
+// 2. Inject enhancement layers (same order as homepage).
+const enhanced = stripped
+  .replace(
+    '</head>',
+    `${noindexMeta}<link rel="stylesheet" href="/polish.css"><link rel="stylesheet" href="/refresh.css"><link rel="stylesheet" href="/amazing.css"></head>`
+  )
+  .replace(
+    '</body>',
+    '<script src="/hydrate.js" defer></script><script src="/polish.js" defer></script><script src="/refresh.js" defer></script><script src="/amazing.js" defer></script></body>'
+  );
+---
+<Fragment set:html={enhanced} />
