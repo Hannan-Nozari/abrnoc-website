@@ -729,6 +729,90 @@
   }
 }
 
+/* ============================================================
+   11. /request/ contact form in dark mode
+   ============================================================ */
+[data-theme="dark"] .request {
+  background-color: #131C2E !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    0 0 0 1px rgba(6, 182, 212, 0.06),
+    0 24px 60px rgba(0, 0, 0, 0.50) !important;
+}
+[data-theme="dark"] .request__header h1,
+[data-theme="dark"] .request__header h2 { color: #F9FAFB !important; }
+[data-theme="dark"] .request__header p,
+[data-theme="dark"] .request__header-info,
+[data-theme="dark"] .request__header span { color: #CBD5E1 !important; }
+[data-theme="dark"] .request__form label {
+  color: #F9FAFB !important;
+}
+[data-theme="dark"] .request__form input,
+[data-theme="dark"] .request__form textarea {
+  background: #0B1220 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #F9FAFB !important;
+  border-radius: 8px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
+}
+[data-theme="dark"] .request__form input:hover,
+[data-theme="dark"] .request__form textarea:hover {
+  border-color: rgba(6, 182, 212, 0.30) !important;
+}
+[data-theme="dark"] .request__form input:focus,
+[data-theme="dark"] .request__form textarea:focus {
+  border-color: #06B6D4 !important;
+  box-shadow:
+    0 0 0 3px rgba(6, 182, 212, 0.18),
+    0 0 22px rgba(6, 182, 212, 0.12) !important;
+  background: #0F172A !important;
+}
+[data-theme="dark"] .request__form input::placeholder,
+[data-theme="dark"] .request__form textarea::placeholder {
+  color: #64748B !important;
+}
+[data-theme="dark"] .request__form .request__form--btn,
+[data-theme="dark"] input.request__form--btn {
+  background: linear-gradient(135deg, #F97316 0%, #FB923C 60%, #06B6D4 140%) !important;
+  background-size: 200% 100% !important;
+  background-position: 0% 50% !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  border-radius: 999px !important;
+  padding: 1.4rem 3.2rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+  cursor: pointer !important;
+  box-shadow:
+    0 6px 18px rgba(249, 115, 22, 0.30),
+    0 0 0 1px rgba(249, 115, 22, 0.20) inset !important;
+  transition: background-position 0.4s ease, box-shadow 0.3s ease, transform 0.2s ease !important;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme="dark"] .request__form .request__form--btn:hover,
+  [data-theme="dark"] input.request__form--btn:hover {
+    background-position: 100% 50% !important;
+    transform: translateY(-2px) scale(1.03) !important;
+    box-shadow:
+      0 14px 32px rgba(249, 115, 22, 0.45),
+      0 0 0 6px rgba(249, 115, 22, 0.18),
+      0 0 22px rgba(6, 182, 212, 0.30) !important;
+  }
+}
+/* The "Or email us directly" line that hydrate.js injects above the form. */
+[data-theme="dark"] .hr-form-direct {
+  color: #94A3B8 !important;
+}
+[data-theme="dark"] .hr-form-direct a {
+  color: #FB923C !important;
+}
+/* The inline notice that appears after Submit. */
+[data-theme="dark"] .hr-form-notice {
+  background: rgba(6, 182, 212, 0.10) !important;
+  border-color: rgba(6, 182, 212, 0.30) !important;
+  color: #67E8F9 !important;
+}
+
 /* One-shot attention pulse on first load so the switch is discoverable. */
 @media (prefers-reduced-motion: no-preference) {
   .refresh-theme-toggle {
