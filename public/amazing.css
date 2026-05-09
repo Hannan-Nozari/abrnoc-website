@@ -813,6 +813,206 @@
   color: #67E8F9 !important;
 }
 
+/* ============================================================
+   12. /request/ — full layout redesign
+       Single-column hero-style: big gradient heading + lead + glass
+       form card centered.  Hides the awkward rocket illustration.
+   ============================================================ */
+#section-request {
+  position: relative;
+  overflow: hidden;
+  padding: 7rem 0 9rem !important;
+}
+#section-request::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(120px);
+  opacity: 0.55;
+  background:
+    radial-gradient(36% 38% at 20% 24%, rgba(6, 182, 212, 0.18) 0%, transparent 60%),
+    radial-gradient(34% 36% at 80% 28%, rgba(249, 115, 22, 0.16) 0%, transparent 60%),
+    radial-gradient(40% 42% at 50% 90%, rgba(30, 58, 138, 0.18) 0%, transparent 60%);
+}
+[data-theme="dark"] #section-request::before { opacity: 0.35; }
+
+/* Reflow the .request flex container vertically, centered. */
+.request {
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  padding: 6rem 3.2rem !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  position: relative !important;
+  z-index: 1;
+  max-width: 1100px !important;
+}
+[data-theme="dark"] .request { background: transparent !important; }
+
+/* Header: big gradient headline + lead, no rocket. */
+.request__header {
+  width: 100% !important;
+  max-width: 760px !important;
+  margin: 0 0 4rem 0 !important;
+  align-items: center !important;
+  -webkit-margin-end: 0 !important;
+  margin-inline-end: 0 !important;
+  padding: 0 !important;
+  -webkit-padding-end: 0 !important;
+  padding-inline-end: 0 !important;
+}
+.request__header h1,
+.request__header h2 {
+  font-size: 6rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.04em !important;
+  line-height: 1.05 !important;
+  margin-bottom: 2rem !important;
+  background: linear-gradient(135deg, var(--clr-navy, #0B1220) 0%, var(--clr-blue, #06B6D4) 55%, var(--clr-orange, #F97316) 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent !important;
+}
+[data-theme="dark"] .request__header h1,
+[data-theme="dark"] .request__header h2 {
+  background: linear-gradient(135deg, #F9FAFB 0%, #06B6D4 55%, #F97316 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent !important;
+}
+@media (max-width: 720px) {
+  .request__header h1,
+  .request__header h2 { font-size: 3.6rem !important; }
+}
+
+.request__header p,
+.request__header-info {
+  font-size: 1.7rem !important;
+  line-height: 1.6 !important;
+  max-width: 560px !important;
+  margin: 0 auto 0 auto !important;
+  -webkit-padding-end: 0 !important;
+  padding-inline-end: 0 !important;
+  padding: 0 !important;
+}
+.request__header span {
+  font-size: 1.7rem !important;
+  line-height: 1.6 !important;
+}
+
+/* Drop the rocket image — it crowds the centered layout. */
+.request__header img {
+  display: none !important;
+}
+
+/* Form: glass card, centered, generous padding, side-by-side Name + Email. */
+.request__form {
+  width: 100% !important;
+  max-width: 600px !important;
+  background: rgba(255, 255, 255, 0.70) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+          backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(11, 18, 32, 0.08) !important;
+  border-radius: 18px !important;
+  padding: 3.6rem 3.2rem !important;
+  box-shadow:
+    0 1px 2px rgba(11, 18, 32, 0.04),
+    0 24px 48px rgba(11, 18, 32, 0.10) !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  flex-direction: row !important;
+  gap: 1.8rem !important;
+}
+[data-theme="dark"] .request__form {
+  background: rgba(15, 23, 42, 0.62) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    0 0 0 1px rgba(6, 182, 212, 0.06),
+    0 24px 60px rgba(0, 0, 0, 0.50) !important;
+}
+
+/* The injected fallback line lives at the top of the form, full-width. */
+.request__form .hr-form-direct {
+  flex: 0 0 100% !important;
+  text-align: left;
+  margin: 0 !important;
+}
+
+/* Side-by-side Name + Email on wide enough screens. */
+.request__form > div {
+  flex: 1 1 100% !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+.request__form > .request__form--name,
+.request__form > .request__form--email {
+  flex: 1 1 calc(50% - 0.9rem) !important;
+}
+@media (max-width: 540px) {
+  .request__form > .request__form--name,
+  .request__form > .request__form--email {
+    flex: 1 1 100% !important;
+  }
+}
+
+.request__form label {
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem !important;
+}
+
+.request__form input,
+.request__form textarea {
+  border-radius: 10px !important;
+  font-size: 1.5rem !important;
+  padding: 1.2rem 1.6rem !important;
+}
+
+/* The submit button is a bare <input>, not in a wrapping div — make it
+   span the full row and pop. */
+.request__form .request__form--btn,
+.request__form input.request__form--btn {
+  flex: 1 1 100% !important;
+  width: 100% !important;
+  margin-top: 0.6rem !important;
+  padding: 1.4rem 2rem !important;
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  border-radius: 999px !important;
+  cursor: pointer !important;
+  border: none !important;
+  background: linear-gradient(135deg, #F97316 0%, #FB923C 60%, #06B6D4 140%) !important;
+  background-size: 200% 100% !important;
+  background-position: 0% 50% !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 18px rgba(249, 115, 22, 0.30) !important;
+  transition: background-position 0.4s ease, box-shadow 0.3s ease, transform 0.2s ease !important;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .request__form .request__form--btn:hover,
+  .request__form input.request__form--btn:hover {
+    background-position: 100% 50% !important;
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow:
+      0 14px 32px rgba(249, 115, 22, 0.45),
+      0 0 22px rgba(6, 182, 212, 0.30) !important;
+  }
+}
+
+/* The post-submit notice — full width inside the new form. */
+.request__form .hr-form-notice {
+  flex: 1 1 100% !important;
+  margin-top: 0.4rem !important;
+}
+
 /* One-shot attention pulse on first load so the switch is discoverable. */
 @media (prefers-reduced-motion: no-preference) {
   .refresh-theme-toggle {
