@@ -156,16 +156,18 @@
       window.location.href = mailto;
     });
 
-    // Direct-email line above the form.
-    if (!form.parentElement || form.parentElement.querySelector('.hr-form-direct')) return;
+    // Direct-email line at the top of the form (BEFORE the first input,
+    // not as a sibling of the form — that breaks the request__header/form
+    // flex layout).
+    if (form.querySelector('.hr-form-direct')) return;
     const direct = document.createElement('p');
     direct.className = 'hr-form-direct';
     direct.style.cssText =
-      'margin:0 0 2.4rem 0;font-size:1.5rem;color:#6B7280;line-height:1.6;';
+      'margin:0 0 2rem 0;font-size:1.4rem;color:#6B7280;line-height:1.5;';
     direct.innerHTML =
       'Or email us directly at ' +
       '<a href="mailto:hr@abrnoc.com" style="color:#F97316;font-weight:600;text-decoration:none;border-bottom:1px solid currentColor;">hr@abrnoc.com</a>.';
-    form.parentElement.insertBefore(direct, form);
+    form.insertBefore(direct, form.firstChild);
   };
 
   const boot = () => { init(); wireRequestForm(); };
