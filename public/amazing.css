@@ -1051,13 +1051,17 @@
 [data-theme="dark"] #section-services,
 [data-theme="dark"] #section-choose,
 [data-theme="dark"] #section-request_cta,
+[data-theme="dark"] #section-request,
 [data-theme="dark"] #section-map,
 [data-theme="dark"] #section-join,
 [data-theme="dark"] #section-who,
 [data-theme="dark"] #section-team,
 [data-theme="dark"] #section-Customers,
 [data-theme="dark"] #section-refer_cta,
-[data-theme="dark"] .gallery-section {
+[data-theme="dark"] #section-terms,
+[data-theme="dark"] .gallery-section,
+[data-theme="dark"] main,
+[data-theme="dark"] [class*="layout"] {
   background-color: #0B1220 !important;
   background-image: none !important;
   color: #E5E7EB !important;
