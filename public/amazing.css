@@ -532,6 +532,24 @@
   border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
+/* Menu legibility — original abrnoc gray (#707070) on white is too faint.
+   Darken to a near-black navy in light mode, keep the original active-blue. */
+.nav-links a {
+  color: #1F2937 !important;
+  font-weight: 600 !important;
+}
+.nav-links a:hover,
+.nav-links a.page_links_active {
+  color: var(--clr-orange, #F97316) !important;
+}
+[data-theme="dark"] .nav-links a {
+  color: #E5E7EB !important;
+}
+[data-theme="dark"] .nav-links a:hover,
+[data-theme="dark"] .nav-links a.page_links_active {
+  color: var(--clr-orange, #F97316) !important;
+}
+
 /* One-shot attention pulse on first load so the switch is discoverable. */
 @media (prefers-reduced-motion: no-preference) {
   .refresh-theme-toggle {
