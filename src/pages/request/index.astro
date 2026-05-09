@@ -7,6 +7,9 @@ export const prerender = true;
 // Staging on astro.abrnoc.com — block search indexing.
 const noindexMeta = '<meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><meta name="googlebot" content="noindex,nofollow">';
 
+// Theme bootstrap: dark by default for first-time visitors. See index.astro.
+const themeBootstrap = '<script>(function(){try{var s=localStorage.getItem("abrnoc-theme");if(s!=="dark"&&s!=="light"){localStorage.setItem("abrnoc-theme","dark");s="dark";}if(s==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();</script>';
+
 // 1. Strip dead Gatsby JS.
 const deadScriptSrcRe = /<script[^>]+src=["']\/(?:app-|framework-|webpack-runtime-|component---src-pages-)[^"']+["'][^>]*>\s*<\/script>/g;
 const chunkMappingRe = /<script[^>]*id=["']gatsby-chunk-mapping["'][^>]*>[\s\S]*?<\/script>/g;
@@ -23,7 +26,7 @@ const stripped = rawHtml
 const enhanced = stripped
   .replace(
     '</head>',
-    `${noindexMeta}<link rel="stylesheet" href="/polish.css"><link rel="stylesheet" href="/refresh.css"><link rel="stylesheet" href="/amazing.css"></head>`
+    `${noindexMeta}${themeBootstrap}<link rel="stylesheet" href="/polish.css"><link rel="stylesheet" href="/refresh.css"><link rel="stylesheet" href="/amazing.css"></head>`
   )
   .replace(
     '</body>',
