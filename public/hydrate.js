@@ -45,6 +45,35 @@
       refLink.setAttribute('href', '/request/');
     }
 
+    // ── 1c. Logo wordmark theme swap ─────────────────────────────────────
+    // The bundled SVG logo paints the "abrNOC" wordmark with fill="#182126"
+    // (near-black) which disappears against the dark theme. We pre-compute a
+    // white-wordmark variant of the SAME SVG and swap the <img>'s data URI
+    // whenever data-theme on <html> changes.
+    const logoImg = document.querySelector('.site-branding img');
+    if (logoImg && logoImg.src.indexOf('data:image/svg+xml;base64,') === 0) {
+      const originalSrc = logoImg.src;
+      let darkSrc = null;
+      try {
+        const b64    = originalSrc.split('base64,')[1];
+        const svg    = atob(b64);
+        const reFill = svg.replace(/fill="#182126"/g, 'fill="#F9FAFB"');
+        darkSrc = 'data:image/svg+xml;base64,' + btoa(reFill);
+      } catch (e) { /* base64/atob failed — leave logo as-is */ }
+
+      if (darkSrc) {
+        const applyLogoTheme = () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          logoImg.src = isDark ? darkSrc : originalSrc;
+        };
+        applyLogoTheme();
+        new MutationObserver(applyLogoTheme).observe(
+          document.documentElement,
+          { attributes: true, attributeFilter: ['data-theme'] }
+        );
+      }
+    }
+
     // ── 2. Team members ──────────────────────────────────────────────────
     // Real team data scraped from the production Gatsby bundle. Photos are
     // mirrored to /static/ on this VPS. Hover swaps to the second photo via
