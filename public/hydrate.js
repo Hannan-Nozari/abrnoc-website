@@ -12,8 +12,12 @@
 //      React app populates it from a JSON data source. We inject a static
 //      list of team members here so the "Nice to Meet You" section is real.
 //
-// Both effects are skipped when prefers-reduced-motion: reduce is set, except
-// item 2 which is content (not motion) and always runs.
+//   3. Swap the "Referral" navbar link for "Contact" pointing at /request/.
+//      The /referral/ page was removed; this turns the slot into something
+//      useful instead of a 404 link.
+//
+// Effects 1 & 3 are independent of motion preferences. Effect 2 is content,
+// also always runs.
 
 (function () {
   if (typeof window === 'undefined') return;
@@ -29,6 +33,16 @@
       };
       update();
       window.addEventListener('scroll', update, { passive: true });
+    }
+
+    // ── 1b. Replace "Referral" → "Contact" (/request/) in the navbar ─────
+    // The /referral/ page was removed; rather than leave a dead link, repurpose
+    // the menu slot as a Contact link to the existing /request/ form page.
+    const refLink = document.querySelector('a.page_links[href="/referral/"], a.page_links_active[href="/referral/"]');
+    if (refLink) {
+      refLink.textContent = 'Contact';
+      refLink.title = 'Contact';
+      refLink.setAttribute('href', '/request/');
     }
 
     // ── 2. Team members ──────────────────────────────────────────────────
