@@ -550,6 +550,185 @@
   color: var(--clr-orange, #F97316) !important;
 }
 
+/* ============================================================
+   10. DARK MODE — modern flourishes
+       Glow, gradients, and depth that only kick in for dark theme.
+   ============================================================ */
+
+/* Subtle drifting mesh on the body so dark mode isn't a flat navy slab. */
+[data-theme="dark"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(48% 40% at 12% 18%, rgba(6, 182, 212, 0.10) 0%, transparent 60%),
+    radial-gradient(42% 38% at 88% 24%, rgba(249, 115, 22, 0.08) 0%, transparent 60%),
+    radial-gradient(60% 50% at 50% 100%, rgba(30, 58, 138, 0.18) 0%, transparent 65%);
+  filter: blur(40px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme="dark"] body::before {
+    animation: dark-mesh-drift 26s ease-in-out infinite alternate;
+  }
+  @keyframes dark-mesh-drift {
+    0%   { transform: translate3d(0, 0, 0) scale(1); }
+    50%  { transform: translate3d(2%, -1%, 0) scale(1.04); }
+    100% { transform: translate3d(-2%, 1%, 0) scale(0.98); }
+  }
+}
+
+/* Faint dot grid overlay so the bg has texture, not just colour. */
+[data-theme="dark"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+[data-theme="dark"] body > * { position: relative; z-index: 1; }
+
+/* Hero rocket glow halo — the rocket on dark mode benefits from a soft
+   color halo so it doesn't float in space without context. */
+@media (min-width: 1100px) {
+  [data-theme="dark"] #section-hero {
+    --rocket-halo: radial-gradient(36% 36% at 78% 50%,
+      rgba(249, 115, 22, 0.20) 0%,
+      rgba(6, 182, 212, 0.10) 35%,
+      transparent 70%);
+    background-image: var(--rocket-halo) !important;
+    background-repeat: no-repeat !important;
+  }
+}
+
+/* Card-hover glow — every card-shaped surface in dark mode picks up a
+   soft cyan/orange ring on hover. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme="dark"] .testimonial-item,
+  [data-theme="dark"] [class*="testimonial-item"],
+  [data-theme="dark"] .services__item,
+  [data-theme="dark"] .cloud-info,
+  [data-theme="dark"] .cloud-storage-card,
+  [data-theme="dark"] [class*="cloud-info"],
+  [data-theme="dark"] [class*="cloud-storage"],
+  [data-theme="dark"] .join__body-item,
+  [data-theme="dark"] .team-member,
+  [data-theme="dark"] [class*="priceCard-module--price-card--"],
+  [data-theme="dark"] .gallery [class^="gallery__item--"] {
+    transition:
+      box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.35s ease,
+      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+  [data-theme="dark"] .testimonial-item:hover,
+  [data-theme="dark"] [class*="testimonial-item"]:hover,
+  [data-theme="dark"] .services__item:hover,
+  [data-theme="dark"] .cloud-info:hover,
+  [data-theme="dark"] .cloud-storage-card:hover,
+  [data-theme="dark"] [class*="cloud-info"]:hover,
+  [data-theme="dark"] [class*="cloud-storage"]:hover,
+  [data-theme="dark"] .join__body-item:hover,
+  [data-theme="dark"] .team-member:hover,
+  [data-theme="dark"] [class*="priceCard-module--price-card--"]:hover,
+  [data-theme="dark"] .gallery [class^="gallery__item--"]:hover {
+    border-color: rgba(6, 182, 212, 0.30) !important;
+    box-shadow:
+      0 0 0 1px rgba(6, 182, 212, 0.12),
+      0 12px 32px rgba(0, 0, 0, 0.50),
+      0 0 28px rgba(249, 115, 22, 0.18) !important;
+  }
+}
+
+/* Buttons — primary CTAs in dark mode get a continuous pulsing glow that
+   ramps up on hover. */
+[data-theme="dark"] .request_cta__btn,
+[data-theme="dark"] .refer_cta__btn,
+[data-theme="dark"] .btn.join__body-btn,
+[data-theme="dark"] a.btn[href*="request"],
+[data-theme="dark"] a.btn[href*="referral"] {
+  background: linear-gradient(135deg, #F97316 0%, #FB923C 60%, #06B6D4 140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  box-shadow:
+    0 6px 18px rgba(249, 115, 22, 0.30),
+    0 0 0 1px rgba(249, 115, 22, 0.20) inset !important;
+  color: #FFFFFF !important;
+  transition: box-shadow 0.3s ease, transform 0.2s ease, background-position 0.5s ease !important;
+  background-size: 200% 100% !important;
+  background-position: 0% 50% !important;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme="dark"] .request_cta__btn:hover,
+  [data-theme="dark"] .refer_cta__btn:hover,
+  [data-theme="dark"] .btn.join__body-btn:hover,
+  [data-theme="dark"] a.btn[href*="request"]:hover,
+  [data-theme="dark"] a.btn[href*="referral"]:hover {
+    background-position: 100% 50% !important;
+    box-shadow:
+      0 14px 32px rgba(249, 115, 22, 0.45),
+      0 0 0 6px rgba(249, 115, 22, 0.18),
+      0 0 22px rgba(6, 182, 212, 0.30) !important;
+    transform: translateY(-2px) scale(1.04) !important;
+  }
+}
+
+/* Gradient hairline between sections so the page has rhythm in dark mode. */
+[data-theme="dark"] section + section::before,
+[data-theme="dark"] section[id^="section-"] + section[id^="section-"]::before {
+  content: "";
+  display: block;
+  height: 1px;
+  width: min(80%, 1280px);
+  margin: 0 auto;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(6, 182, 212, 0.18) 30%,
+    rgba(249, 115, 22, 0.18) 70%,
+    transparent 100%);
+}
+
+/* Custom dark-mode scrollbar — thin, cyan thumb. */
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #0B1220;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #06B6D4 0%, #1E3A8A 100%);
+  border-radius: 8px;
+  border: 2px solid #0B1220;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #06B6D4 0%, #F97316 100%);
+}
+[data-theme="dark"] {
+  scrollbar-color: #06B6D4 #0B1220;
+  scrollbar-width: thin;
+}
+
+/* Stats ticker band in dark mode — soft luminous border + glow */
+[data-theme="dark"] .amazing-stats {
+  border: 1px solid rgba(6, 182, 212, 0.18) !important;
+  box-shadow:
+    0 0 0 1px rgba(6, 182, 212, 0.05),
+    0 18px 40px rgba(0, 0, 0, 0.45),
+    0 0 28px rgba(6, 182, 212, 0.10) !important;
+}
+
+/* Gallery in dark mode — when hovering a tile, the photo's edges glow cyan. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme="dark"] .gallery [class^="gallery__item--"]:hover {
+    box-shadow:
+      0 0 0 1px rgba(6, 182, 212, 0.30),
+      0 22px 44px rgba(0, 0, 0, 0.55),
+      0 0 36px rgba(6, 182, 212, 0.15) !important;
+  }
+}
+
 /* One-shot attention pulse on first load so the switch is discoverable. */
 @media (prefers-reduced-motion: no-preference) {
   .refresh-theme-toggle {
