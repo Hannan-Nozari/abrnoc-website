@@ -468,6 +468,164 @@
       which compose with the existing `transform` parallax (so the
       bob doesn't fight scroll-driven movement).
    ============================================================ */
+/* ============================================================
+   9. SEGMENTED THEME SWITCHER + COMPLETE DARK MODE COVERAGE
+   ============================================================ */
+/* Override refresh.css's tiny round toggle with a proper segmented pill
+   that shows BOTH sun + moon, with a sliding knob — unmistakable as a
+   theme switch. Overrides the icon-show/hide rules from refresh.css. */
+.refresh-theme-toggle {
+  width: 88px !important;
+  height: 40px !important;
+  border-radius: 999px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  position: fixed !important;
+  top: 18px !important;
+  right: 20px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(11, 18, 32, 0.10) !important;
+  box-shadow: 0 6px 18px rgba(11, 18, 32, 0.12) !important;
+  overflow: visible !important;
+  z-index: 9999 !important;
+}
+.refresh-theme-toggle::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FDE68A, #F97316);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), background 0.25s ease;
+  z-index: 1;
+}
+[data-theme="dark"] .refresh-theme-toggle::before {
+  transform: translateX(48px);
+  background: linear-gradient(135deg, #1E293B, #06B6D4);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.35);
+}
+/* Force BOTH icons visible on the segmented switch (refresh.css hides one). */
+.refresh-theme-toggle .refresh-icon-sun,
+.refresh-theme-toggle .refresh-icon-moon {
+  display: inline-flex !important;
+  width: 18px !important;
+  height: 18px !important;
+  z-index: 2;
+  position: relative;
+  transition: opacity 0.25s ease, color 0.25s ease;
+}
+.refresh-theme-toggle .refresh-icon-sun  { margin-left: 8px;  color: #FFFFFF; }
+.refresh-theme-toggle .refresh-icon-moon { margin-right: 8px; color: #94A3B8; }
+[data-theme="dark"] .refresh-theme-toggle .refresh-icon-sun  { color: #94A3B8; }
+[data-theme="dark"] .refresh-theme-toggle .refresh-icon-moon { color: #FFFFFF; }
+.refresh-theme-toggle:hover {
+  transform: translateY(-1px) scale(1.03) !important;
+  box-shadow: 0 10px 26px rgba(11, 18, 32, 0.18) !important;
+}
+[data-theme="dark"] .refresh-theme-toggle {
+  background: rgba(15, 23, 42, 0.94) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* One-shot attention pulse on first load so the switch is discoverable. */
+@media (prefers-reduced-motion: no-preference) {
+  .refresh-theme-toggle {
+    animation: theme-toggle-pulse 1.6s ease-out 0.6s 2;
+  }
+  @keyframes theme-toggle-pulse {
+    0%, 100% { box-shadow: 0 6px 18px rgba(11, 18, 32, 0.12); }
+    50%      { box-shadow: 0 6px 18px rgba(11, 18, 32, 0.12), 0 0 0 12px rgba(249, 115, 22, 0.18); }
+  }
+}
+
+/* ── Dark theme: section background overrides the refresh layer missed ── */
+[data-theme="dark"] {
+  --clr-background: #0B1220;
+}
+[data-theme="dark"] body,
+[data-theme="dark"] #section-hero,
+[data-theme="dark"] #section-services,
+[data-theme="dark"] #section-choose,
+[data-theme="dark"] #section-request_cta,
+[data-theme="dark"] #section-map,
+[data-theme="dark"] #section-join,
+[data-theme="dark"] #section-who,
+[data-theme="dark"] #section-team,
+[data-theme="dark"] #section-Customers,
+[data-theme="dark"] #section-refer_cta,
+[data-theme="dark"] .gallery-section {
+  background-color: #0B1220 !important;
+  background-image: none !important;
+  color: #E5E7EB !important;
+}
+/* "Who We Are" pink-tint band */
+[data-theme="dark"] .who {
+  background: #131C2E !important;
+  background-image: none !important;
+}
+/* Headings + body text */
+[data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3,
+[data-theme="dark"] h4, [data-theme="dark"] h5, [data-theme="dark"] h6 {
+  color: #F9FAFB !important;
+}
+[data-theme="dark"] p, [data-theme="dark"] li, [data-theme="dark"] span,
+[data-theme="dark"] .who__header-info,
+[data-theme="dark"] .hero-info--content,
+[data-theme="dark"] .services__header-info,
+[data-theme="dark"] .testimonials__describe,
+[data-theme="dark"] .team-member__info {
+  color: #CBD5E1 !important;
+}
+[data-theme="dark"] .nav-links a {
+  color: #CBD5E1 !important;
+}
+[data-theme="dark"] .nav-links a:hover { color: #F9FAFB !important; }
+/* Footer */
+[data-theme="dark"] footer,
+[data-theme="dark"] .footer,
+[data-theme="dark"] [class*="footer"] {
+  background: #050A14 !important;
+  color: #94A3B8 !important;
+}
+[data-theme="dark"] footer a, [data-theme="dark"] [class*="footer"] a { color: #CBD5E1 !important; }
+/* Testimonials card bg */
+[data-theme="dark"] .testimonial-item,
+[data-theme="dark"] [class*="testimonial-item"] {
+  background: #131C2E !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+/* Service cards (cloud-info / cloud-storage-card) */
+[data-theme="dark"] .cloud-info,
+[data-theme="dark"] .cloud-storage-card,
+[data-theme="dark"] [class*="cloud-info"],
+[data-theme="dark"] [class*="cloud-storage"] {
+  background: #131C2E !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #E5E7EB !important;
+}
+/* Join section bands */
+[data-theme="dark"] .join__body-item {
+  background: #131C2E !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+/* Refer-CTA gradient banner: keep the gradient but lift contrast */
+[data-theme="dark"] .request_cta { filter: brightness(0.85) saturate(1.1); }
+/* Map section image — dim slightly so it doesn't burn against dark bg */
+[data-theme="dark"] .map-img { filter: brightness(0.85) contrast(1.05); }
+/* Original ::after rocket on desktop hero — drop opacity in dark */
+[data-theme="dark"] #section-hero::after { opacity: 0.92; }
+
+/* ============================================================
+   8. ROCKET FLOAT — gently bob + tilt so it feels alive.
+      Uses the independent `translate` and `rotate` CSS properties,
+      which compose with the existing `transform` parallax (so the
+      bob doesn't fight scroll-driven movement).
+   ============================================================ */
 @media (prefers-reduced-motion: no-preference) {
   #section-hero::after,
   #section-hero .hero-img {
