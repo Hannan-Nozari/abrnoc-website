@@ -105,9 +105,74 @@
     }
   };
 
+  // ── 4. /request/ contact form → mailto:hr@abrnoc.com ────────────────────
+  // The original Gatsby form posted to a backend that doesn't exist on this
+  // VPS. Replace the submit handler with a mailto: that pre-fills an email
+  // to hr@abrnoc.com using the form fields. Also drop a visible fallback
+  // address above the form so anyone whose email client doesn't open still
+  // has the address.
+  const wireRequestForm = () => {
+    const form = document.querySelector('form.request__form');
+    if (!form || form.dataset.hrWired === '1') return;
+    form.dataset.hrWired = '1';
+
+    // Intercept submit → build mailto.
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const name    = (fd.get('name')    || '').toString().trim();
+      const email   = (fd.get('email')   || '').toString().trim();
+      const company = (fd.get('company') || '').toString().trim();
+      const message = (fd.get('message') || '').toString().trim();
+
+      const subject = 'abrNOC contact request — ' + name +
+        (company ? ' (' + company + ')' : '');
+      const body =
+        'Name:    ' + name + '\n' +
+        'Email:   ' + email + '\n' +
+        'Company: ' + company + '\n\n' +
+        'Message:\n' + (message || '(no message)') + '\n\n' +
+        '— Sent from astro.abrnoc.com /request form';
+
+      const mailto = 'mailto:hr@abrnoc.com?subject=' +
+        encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+
+      // Inline notice so the user knows what happened.
+      let notice = form.querySelector('.hr-form-notice');
+      if (!notice) {
+        notice = document.createElement('div');
+        notice.className = 'hr-form-notice';
+        notice.style.cssText =
+          'margin-top:1.8rem;padding:1.2rem 1.6rem;border-radius:10px;' +
+          'background:rgba(6,182,212,0.10);border:1px solid rgba(6,182,212,0.30);' +
+          'color:#0891B2;font-weight:600;font-size:1.4rem;line-height:1.5;';
+        form.appendChild(notice);
+      }
+      notice.innerHTML =
+        'Opening your email app to send to ' +
+        '<a href="mailto:hr@abrnoc.com" style="color:#F97316;text-decoration:underline">hr@abrnoc.com</a>… ' +
+        '<span style="color:#6B7280;font-weight:500">If nothing opened, copy that address and email us directly.</span>';
+
+      window.location.href = mailto;
+    });
+
+    // Direct-email line above the form.
+    if (!form.parentElement || form.parentElement.querySelector('.hr-form-direct')) return;
+    const direct = document.createElement('p');
+    direct.className = 'hr-form-direct';
+    direct.style.cssText =
+      'margin:0 0 2.4rem 0;font-size:1.5rem;color:#6B7280;line-height:1.6;';
+    direct.innerHTML =
+      'Or email us directly at ' +
+      '<a href="mailto:hr@abrnoc.com" style="color:#F97316;font-weight:600;text-decoration:none;border-bottom:1px solid currentColor;">hr@abrnoc.com</a>.';
+    form.parentElement.insertBefore(direct, form);
+  };
+
+  const boot = () => { init(); wireRequestForm(); };
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', boot);
   } else {
-    init();
+    boot();
   }
 })();
