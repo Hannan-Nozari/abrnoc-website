@@ -636,7 +636,13 @@
   background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
   background-size: 32px 32px;
 }
-[data-theme="dark"] body > * { position: relative; z-index: 1; }
+/* Lift body children above the bg pseudo-elements (which sit at z-index: 0).
+   Exclude the lightbox so its own z-index: 100000 isn't capped here. */
+[data-theme="dark"] body > *:not(.amazing-lightbox) {
+  position: relative;
+  z-index: 1;
+}
+.amazing-lightbox { z-index: 100000 !important; }
 
 /* Hero rocket glow halo — the rocket on dark mode benefits from a soft
    color halo so it doesn't float in space without context. */
