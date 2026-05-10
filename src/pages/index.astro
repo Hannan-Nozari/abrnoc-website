@@ -21,9 +21,6 @@
 import rawHtml from '../../source-snapshot/index.html?raw';
 export const prerender = true;
 
-// Staging on astro.abrnoc.com — block search indexing.
-const noindexMeta = '<meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><meta name="googlebot" content="noindex,nofollow">';
-
 // Theme bootstrap: dark by default for first-time visitors.  Inline so it
 // runs before any CSS paints, avoiding a flash of light theme.  Respects
 // returning users' stored choice; only seeds 'dark' when nothing is stored.
@@ -55,7 +52,7 @@ const stripped = rawHtml
 const enhanced = stripped
   .replace(
     '</head>',
-    `${noindexMeta}${themeBootstrap}<link rel="stylesheet" href="/polish.css"><link rel="stylesheet" href="/refresh.css"><link rel="stylesheet" href="/amazing.css"></head>`
+    `${themeBootstrap}<link rel="stylesheet" href="/polish.css"><link rel="stylesheet" href="/refresh.css"><link rel="stylesheet" href="/amazing.css"></head>`
   )
   .replace(
     '</body>',
