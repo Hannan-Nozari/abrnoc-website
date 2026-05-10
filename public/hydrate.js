@@ -52,6 +52,23 @@
       a.setAttribute('href', '/request/');
     });
 
+    // ── 1c2. Site-wide link rewrites — fix broken / removed routes ───────
+    // /careers/* doesn't exist on this VPS (jobs.abrnoc.com handles careers).
+    // /referral/* was deliberately removed; route those to /request/.
+    document.querySelectorAll('a[href]').forEach((a) => {
+      const href = a.getAttribute('href') || '';
+      // /careers or /careers/anything → external careers subdomain
+      if (/^\/careers(\/|$|#)/.test(href)) {
+        a.setAttribute('href', 'https://jobs.abrnoc.com');
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener');
+      }
+      // any remaining /referral or /referral/anything → /request/
+      else if (/^\/referral(\/|$|#)/.test(href)) {
+        a.setAttribute('href', '/request/');
+      }
+    });
+
     // ── 1e. Reorder navbar to HR-forward: Home → Careers → About → Contact
     const navUl = document.querySelector('#menuLinks');
     if (navUl) {
