@@ -1083,6 +1083,75 @@
           drop-shadow(0 0 14px rgba(249, 115, 22, 0.20)) !important;
 }
 
+/* ============================================================
+   14. HERO ENTRANCE CHOREOGRAPHY — first-paint cascade
+       Each piece of the hero slides up + fades in on a staggered
+       timeline so the page comes alive on first visit.  Runs once
+       per page load (no JS needed — pure CSS animation that fires
+       on first render).
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  /* Drive each child element with the same keyframe but different delays. */
+  #section-hero .hero-info--header,
+  #section-hero .hero-info--content,
+  #section-hero .hero-info--subcontent,
+  #section-hero .hero-img,
+  #section-hero .amazing-cli,
+  .amazing-stats {
+    animation: hero-rise 0.95s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+  #section-hero .hero-info--header   { animation-delay: 0.10s; }
+  #section-hero .hero-info--content  { animation-delay: 0.30s; }
+  #section-hero .hero-info--subcontent { animation-delay: 0.45s; }
+  #section-hero .amazing-cli         { animation-delay: 0.55s; }
+  #section-hero .hero-img            { animation-delay: 0.45s; }
+  .amazing-stats                     { animation-delay: 0.75s; }
+
+  @keyframes hero-rise {
+    0%   {
+      opacity: 0;
+      transform: translate3d(0, 28px, 0) scale(0.985);
+      filter: blur(4px);
+    }
+    60%  {
+      opacity: 1;
+      filter: blur(0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  /* The h1 in particular gets a softer, longer arc + a subtle gradient
+     shimmer pass that runs once on entrance. */
+  #section-hero .hero-info--header {
+    animation:
+      hero-rise 1.1s cubic-bezier(0.22, 1, 0.36, 1) backwards,
+      hero-shimmer 2.4s ease 0.4s 1 backwards;
+    background-size: 220% 100% !important;
+    background-position: 100% 50% !important;
+  }
+  @keyframes hero-shimmer {
+    0%   { background-position: 220% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Mesh-gradient backdrop fades in slightly later so the foreground
+     reads first. */
+  #section-hero::before,
+  #section-hero::after {
+    animation:
+      mesh-fade-in 1.2s ease 0.3s backwards,
+      refresh-mesh-a 22s ease-in-out 1.5s infinite alternate;
+  }
+  @keyframes mesh-fade-in {
+    from { opacity: 0; }
+    to   { opacity: var(--mesh-opacity, 0.18); }
+  }
+}
+
 /* One-shot attention pulse on first load so the switch is discoverable. */
 @media (prefers-reduced-motion: no-preference) {
   .refresh-theme-toggle {
