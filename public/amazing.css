@@ -532,22 +532,69 @@
   border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
-/* Menu legibility — original abrnoc gray (#707070) on white is too faint.
-   Darken to a near-black navy in light mode, keep the original active-blue. */
+/* ── Navbar normalization ────────────────────────────────────────────────
+   Original Gatsby CSS uses 4.5rem horizontal padding per link, which
+   creates an oddly sparse stretched-out menu.  Normalize spacing,
+   typography, and active-link treatment so the bar reads tight and
+   balanced against the logo. */
+
+/* Logo: keep proportions sane in the bar, no over-large rendering. */
+.site-branding img {
+  max-height: 40px !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Menu wrapper: even gap between items via gap, not per-item padding. */
+#menuLinks.nav-links {
+  gap: 0 !important;
+  align-items: center !important;
+}
+.nav-links li { margin: 0 !important; }
+
+/* Per-link: tighter padding, consistent type, animated underline. */
 .nav-links a {
   color: #1F2937 !important;
   font-weight: 600 !important;
+  font-size: 1.6rem !important;
+  letter-spacing: 0.005em !important;
+  padding: 1.2rem 2.2rem !important;
+  position: relative;
+  transition: color 0.18s ease !important;
 }
-.nav-links a:hover,
-.nav-links a.page_links_active {
-  color: var(--clr-orange, #F97316) !important;
+
+/* Replace the original heavy underline with a clean animated one. */
+.nav-links a::after,
+.nav-links a:hover::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 0.4rem !important;
+  height: 2px !important;
+  width: 0 !important;
+  background: linear-gradient(90deg, var(--clr-orange, #F97316), var(--clr-blue, #06B6D4)) !important;
+  transform: translateX(-50%) !important;
+  transition: width 0.25s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  border-radius: 999px !important;
+  top: auto !important;
+  right: auto !important;
 }
-[data-theme="dark"] .nav-links a {
-  color: #E5E7EB !important;
-}
+.nav-links a:hover { color: var(--clr-orange, #F97316) !important; }
+.nav-links a:hover::after { width: 60% !important; }
+
+/* Active page link — solid underline + accent color. */
+.nav-links a.page_links_active { color: var(--clr-orange, #F97316) !important; }
+.nav-links a.page_links_active::after { width: 60% !important; }
+
+[data-theme="dark"] .nav-links a { color: #E5E7EB !important; }
 [data-theme="dark"] .nav-links a:hover,
 [data-theme="dark"] .nav-links a.page_links_active {
   color: var(--clr-orange, #F97316) !important;
+}
+
+/* Compact a touch on smaller laptops. */
+@media (max-width: 1100px) {
+  .nav-links a { padding: 1.2rem 1.4rem !important; font-size: 1.5rem !important; }
 }
 
 /* ============================================================

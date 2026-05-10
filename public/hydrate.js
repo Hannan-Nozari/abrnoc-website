@@ -52,6 +52,21 @@
       a.setAttribute('href', '/request/');
     });
 
+    // ── 1e. Reorder navbar to HR-forward: Home → Careers → About → Contact
+    const navUl = document.querySelector('#menuLinks');
+    if (navUl) {
+      const order = ['Home', 'Careers', 'About Us', 'Contact'];
+      const items = Array.from(navUl.children);
+      items.sort((a, b) => {
+        const ta = (a.textContent || '').trim();
+        const tb = (b.textContent || '').trim();
+        const ia = order.indexOf(ta);
+        const ib = order.indexOf(tb);
+        return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+      });
+      items.forEach((li) => navUl.appendChild(li));
+    }
+
     // ── 1d. Auto-update the copyright year so it's never stale ──────────
     const copyP = document.querySelector('.footer-copyright p');
     if (copyP) {
