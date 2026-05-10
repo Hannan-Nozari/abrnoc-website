@@ -1079,6 +1079,12 @@
 }
 
 /* ============================================================
+   12a. HIDE the "Nice to Meet You" team section
+        (filter bar + team cards) per user request.
+   ============================================================ */
+#section-team { display: none !important; }
+
+/* ============================================================
    12b. FOOTER POLISH — tame the oversized logo, tighten layout,
         add a gradient hairline up top.
    ============================================================ */
