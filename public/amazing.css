@@ -1079,10 +1079,11 @@
 }
 
 /* ============================================================
-   12a. HIDE the "Nice to Meet You" team section
-        (filter bar + team cards) per user request.
+   12a. Team section: keep the heading + cards, but hide the
+        filter-tab bar (All / Technical / Marketing / Support / HR)
+        since those filters aren't actually wired up.
    ============================================================ */
-#section-team { display: none !important; }
+#section-team .team__links { display: none !important; }
 
 /* ============================================================
    12b. FOOTER POLISH — tame the oversized logo, tighten layout,
