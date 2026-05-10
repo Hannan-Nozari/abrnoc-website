@@ -1048,24 +1048,47 @@
   will-change: transform, filter;
 }
 
-/* Continuous idle float — gentle bob + tilt on long cycles, desynced
-   from the rocket so they don't move in lockstep. */
+/* Continuous idle motion — visible bob + sway + a subtle "breathing"
+   scale.  Plus a one-shot "wave hello" wiggle on page load that draws
+   the eye to the logo. */
 @media (prefers-reduced-motion: no-preference) {
   .site-branding img {
     animation:
-      logo-float 6.8s ease-in-out infinite,
-      logo-sway  9.4s ease-in-out infinite;
-    animation-delay: -2.3s, -3.1s;
+      logo-wave 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.4s 1 both,
+      logo-float   5.2s ease-in-out 1.8s infinite,
+      logo-sway    7.6s ease-in-out 1.8s infinite,
+      logo-breathe 4.4s ease-in-out 1.8s infinite;
   }
+
+  /* "Hello!" wiggle — runs once on page load. */
+  @keyframes logo-wave {
+    0%   { rotate:  0deg;  scale: 0.96; }
+    20%  { rotate: -8deg;  scale: 1.04; }
+    40%  { rotate:  8deg;  scale: 1.04; }
+    60%  { rotate: -6deg;  scale: 1.02; }
+    80%  { rotate:  4deg;  scale: 1.01; }
+    100% { rotate:  0deg;  scale: 1; }
+  }
+
+  /* Idle: bob 8px up/down on a 5.2s loop. */
   @keyframes logo-float {
     0%   { translate: 0  0; }
-    50%  { translate: 0 -3px; }
+    50%  { translate: 0 -8px; }
     100% { translate: 0  0; }
   }
+
+  /* Idle: sway ±2.5° on a 7.6s loop, desynced from the bob. */
   @keyframes logo-sway {
-    0%   { rotate: -1deg; }
-    50%  { rotate:  1deg; }
-    100% { rotate: -1deg; }
+    0%   { rotate: -2.5deg; }
+    50%  { rotate:  2.5deg; }
+    100% { rotate: -2.5deg; }
+  }
+
+  /* Idle: breathe — gentle 1.0 → 1.025 scale pulse. */
+  @keyframes logo-breathe {
+    0%   { scale: 1; }
+    50%  { scale: 1.025; }
+    100% { scale: 1; }
   }
 }
 
