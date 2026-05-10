@@ -1031,6 +1031,58 @@
   margin-top: 0.4rem !important;
 }
 
+/* ============================================================
+   13. abrNOC LOGO — gentle continuous motion + hover lift
+   ============================================================ */
+.site-branding {
+  display: inline-block;
+  position: relative;
+  /* allow logo to overflow its bounds during the animation */
+  overflow: visible;
+}
+.site-branding img {
+  transform-origin: 50% 60%;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.35s ease !important;
+  will-change: transform, filter;
+}
+
+/* Continuous idle float — gentle bob + tilt on long cycles, desynced
+   from the rocket so they don't move in lockstep. */
+@media (prefers-reduced-motion: no-preference) {
+  .site-branding img {
+    animation:
+      logo-float 6.8s ease-in-out infinite,
+      logo-sway  9.4s ease-in-out infinite;
+    animation-delay: -2.3s, -3.1s;
+  }
+  @keyframes logo-float {
+    0%   { translate: 0  0; }
+    50%  { translate: 0 -3px; }
+    100% { translate: 0  0; }
+  }
+  @keyframes logo-sway {
+    0%   { rotate: -1deg; }
+    50%  { rotate:  1deg; }
+    100% { rotate: -1deg; }
+  }
+}
+
+/* Hover (or focus): logo perks up, gets a little brighter. */
+.site-branding:hover img,
+.site-branding:focus-visible img {
+  transform: translateY(-2px) scale(1.04) !important;
+  filter: brightness(1.08) saturate(1.1)
+          drop-shadow(0 6px 16px rgba(249, 115, 22, 0.30)) !important;
+}
+[data-theme="dark"] .site-branding:hover img,
+[data-theme="dark"] .site-branding:focus-visible img {
+  filter: brightness(1.12) saturate(1.15)
+          drop-shadow(0 6px 18px rgba(6, 182, 212, 0.35))
+          drop-shadow(0 0 14px rgba(249, 115, 22, 0.20)) !important;
+}
+
 /* One-shot attention pulse on first load so the switch is discoverable. */
 @media (prefers-reduced-motion: no-preference) {
   .refresh-theme-toggle {
