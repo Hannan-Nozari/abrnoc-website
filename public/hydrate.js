@@ -45,6 +45,20 @@
       refLink.setAttribute('href', '/request/');
     }
 
+    // ── 1c. Same swap in the footer ──────────────────────────────────────
+    document.querySelectorAll('.footer-links a[href="/referral/"]').forEach((a) => {
+      a.textContent = 'Contact';
+      a.title = 'Contact';
+      a.setAttribute('href', '/request/');
+    });
+
+    // ── 1d. Auto-update the copyright year so it's never stale ──────────
+    const copyP = document.querySelector('.footer-copyright p');
+    if (copyP) {
+      const yr = new Date().getFullYear();
+      copyP.innerHTML = '&copy; ' + yr + ' abrNOC. All rights reserved.';
+    }
+
     // ── 1c. Logo wordmark theme swap ─────────────────────────────────────
     // The bundled SVG logo paints the "abrNOC" wordmark with fill="#182126"
     // (near-black) which disappears against the dark theme. We pre-compute a

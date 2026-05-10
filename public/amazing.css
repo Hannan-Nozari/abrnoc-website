@@ -1032,6 +1032,98 @@
 }
 
 /* ============================================================
+   12b. FOOTER POLISH — tame the oversized logo, tighten layout,
+        add a gradient hairline up top.
+   ============================================================ */
+#section-footer {
+  position: relative;
+  padding-top: 4rem !important;
+  padding-bottom: 2rem !important;
+}
+#section-footer::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(6, 182, 212, 0.30) 20%,
+    rgba(249, 115, 22, 0.30) 80%,
+    transparent 100%);
+}
+
+/* The footer logo image was rendering huge — cap it at a sensible size. */
+#section-footer .footer-logo,
+#section-footer .footer-logo_mobile {
+  max-height: 44px !important;
+  width: auto !important;
+  height: auto !important;
+  vertical-align: middle;
+}
+
+/* Tighten the row spacing on .footer-links and color the links the right
+   contrast for dark mode. */
+.footer-links {
+  gap: 1.6rem !important;
+  align-items: center !important;
+}
+.footer-links a {
+  font-weight: 600;
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+.footer-links a:hover { transform: translateY(-1px); }
+[data-theme="dark"] .footer-links a {
+  color: #CBD5E1 !important;
+}
+[data-theme="dark"] .footer-links a:hover {
+  color: var(--clr-orange, #F97316) !important;
+}
+
+/* Address / social row */
+[data-theme="dark"] .footer-address p,
+[data-theme="dark"] .footer-address {
+  color: #94A3B8 !important;
+}
+[data-theme="dark"] .footer-address__icon {
+  color: var(--clr-orange, #F97316) !important;
+}
+
+/* Social icons: round subtle hover with brand-color shift */
+.footer-social-links .social-link {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.footer-social-links .social-link:hover {
+  transform: translateY(-2px) scale(1.06);
+}
+[data-theme="dark"] .footer-social-links .social-link {
+  background: rgba(255, 255, 255, 0.04);
+  color: #CBD5E1 !important;
+}
+[data-theme="dark"] .footer-social-links .social-link:hover {
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--clr-orange, #F97316) !important;
+  box-shadow: 0 0 18px rgba(6, 182, 212, 0.25);
+}
+[data-theme="dark"] .footer-social-links .social-link svg {
+  fill: currentColor;
+}
+
+/* Copyright line */
+.footer-copyright p {
+  font-size: 1.3rem !important;
+  letter-spacing: 0.02em;
+}
+[data-theme="dark"] .footer-copyright p {
+  color: #64748B !important;
+}
+
+/* ============================================================
    13. abrNOC LOGO — gentle continuous motion + hover lift
    ============================================================ */
 .site-branding {
